@@ -21,13 +21,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-
   server: {
     proxy: {
       '/api': {
-        target: process.env.VITE_APP_BASE_API, // 使用正确的变量名
+        target: 'https://heimahr.itheima.net',
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, '')
       }
     }
   }

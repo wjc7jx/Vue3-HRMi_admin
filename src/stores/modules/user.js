@@ -7,8 +7,8 @@ export const useUserStore = defineStore(
     () => {
         const token = ref('') // 定义 token
         const setToken = (t) => (token.value = t) // 设置 token
-
-        return { token, setToken }
+        const clearToken = () => (token.value = '')
+        return { token, setToken,clearToken }
     },
     {
         persist: true // 持久化
