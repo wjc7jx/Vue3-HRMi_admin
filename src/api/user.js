@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 实现注册功能
+// 实现登录功能
 export const userLoginService = data => {
     return request({
         method: 'POST',

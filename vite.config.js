@@ -25,6 +25,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'https://heimahr.itheima.net',
+        // target:process.env.VITE_API_URL,
         changeOrigin: true,
       }
     }
