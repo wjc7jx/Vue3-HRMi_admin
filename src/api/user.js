@@ -11,3 +11,17 @@ export const userLoginService = data => {
         }
     })
 }
+export const getUserInfoService = () => {
+    return request({
+        method: 'GET',
+        url: '/sys/profile'
+    })
+}
+// 修改用户密码
+export const updatePasswordService = data => {
+    return request({
+        method: 'PUT',
+        url: '/sys/user/updatePass',
+        data
+    })
+}

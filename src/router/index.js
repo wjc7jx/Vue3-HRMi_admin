@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layout/index.vue'
-
+import { useUserStore } from '@/stores'
 const routes = [
   { 
     path: '/',

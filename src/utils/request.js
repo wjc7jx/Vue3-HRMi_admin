@@ -51,7 +51,7 @@ service.interceptors.response.use(
   (error) => {
     // 响应错误处理  
     console.error('响应拦截器错误:', error);
-
+    // token 失效
     if (error.response && error.response.status === 401) {
       // 401错误，清除token并跳转到登录页面  
       ElMessage({ type: 'error', message: '无效的token，请重新登录' });

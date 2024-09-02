@@ -62,7 +62,7 @@ const onLogin = async() => {
   // 提交前校验
   await form.value.validate()
   const res = await userLoginService(loginForm.value)//提交
-  userStore.setToken(res.data)//保存token
+  userStore.setToken(res)//保存token
   router.push('/')//跳转首页
 
 }
