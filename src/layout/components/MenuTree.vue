@@ -3,16 +3,16 @@
         <!-- 遍历菜单数据，构建菜单结构 -->
         <template v-for="(item, index) in props.menuData" :key="index">
             <!-- 对于没有子菜单的菜单项，使用菜单项组件展示 -->
-            <el-menu-item v-if="!item.children || item.children.length === 0" :index="item.meta.path"
+            <el-menu-item v-if="!item.children && !item.meta.hidden" :index="item.path"
                 @click="handleClickMenu(item)">
                 <el-icon>
                     <component :is="item.meta.icon"></component>
                 </el-icon>
                 <!-- 根据侧边栏收缩状态决定是否显示菜单文字 -->
-                <span>{{ isCollapse ? '' : item.meta.name }}</span>
+                <span>{{ isCollapse ? '' :  item.meta.title  }}</span>
             </el-menu-item>
             <!-- 对于有子菜单的菜单项，使用子菜单组件展示 -->
-            <el-sub-menu v-else :index="item.path">
+            <el-sub-menu v-else-if="!item.meta.hidden":index="item.path">
                 <template #title>
                     <el-icon size="20">
                         <component :is="item.meta.icon"></component>
@@ -45,6 +45,6 @@ const MenuStore = useMenuStore()
  */
 const handleClickMenu = (item) => {
     // 触发设置标签列表动作，传递菜单元数据
-    MenuStore.setTagList(item.meta)
+    MenuStore.setTagList(item)
 }
 </script>

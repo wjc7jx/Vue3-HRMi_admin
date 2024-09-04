@@ -10,9 +10,9 @@
                 <li v-for="tag in menuStore.tagList" :key="tag.path" class="tag"
                     :class="{ 'is-active': tag.path === route.path }" @click="handleClick(tag)">
                     <el-icon>
-                        <component :is="tag.icon"></component>
+                        <component :is="tag.meta.icon"></component>
                     </el-icon>
-                    <span>{{ tag.name }}</span>
+                    <span>{{ tag.meta.title }}</span>
                     <span class="close-icon" @click.stop="closeTab(tag, index)">×</span>
                 </li>
             </ul>
@@ -50,6 +50,9 @@ const router = useRouter()
 const route = useRoute()
 const menuStore = useMenuStore()
 const userStore = useUserStore()
+const title=computed((tag)=>{
+    return tag.meta.title
+})
 // 菜单折叠
 const handleMenu = () => {
     menuStore.setMenuIsCollapse(!menuStore.menuIsCollapse)
@@ -86,7 +89,6 @@ const closeTab = (tag, index) => {
 const getInitials = computed(() => {
     return userStore.userInfo.username?.charAt(0);
 })
-// console.log(getInitials.value);
 // 登出
 const logout = () => {
     userStore.logout()

@@ -18,7 +18,8 @@ import { useMenuStore } from '@/stores'
 // 获取路由工具实例
 const router = useRouter()
 // 根据路由配置动态生成菜单数据
-const menuData = router.options.routes[0].children
+const menuData = router.options.routes[1].children
+console.log(menuData);
 // 使用菜单状态管理
 const menuStore = useMenuStore()
 // 计算属性，动态获取菜单收起状态

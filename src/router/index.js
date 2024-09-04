@@ -1,69 +1,156 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layout/index.vue'
-import { useUserStore } from '@/stores'
-const routes = [
-  { 
-    path: '/',
-    component: Layout,
-    name: 'main',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index.vue'),
-        meta: { id: '1', name: '控制台', icon: 'Platform', path: '/dashboard', describe: '用于展示当前系统中的统计数据、统计报表及重要实时数据' }
-      },
-      // {
-      //   path: 'auth',
-      //   meta: { id: '2', name: '权限管理', icon: 'Grid' },
-      //   children: [
-      //     {
-      //       path: 'admin',
-      //       alias: ['/auth', '/auth/admin'], // alias 应该是一个数组
-      //       component: () => import('@/views/auth/admin/index.vue'),
-      //       meta: { id: '1', name: '账号管理', icon: 'Avatar', path: '/auth/admin', describe: '管理员可以进行编辑，权限修改后需要登出才会生效' }
-      //     },
-      //     {
-      //       path: 'group',
-      //       component: () => import('@/views/auth/group/index.vue'),
-      //       meta: { id: '2', name: '菜单管理', icon: 'Menu', path: '/auth/group', describe: '菜单规则通常对应一个控制器的方法,同时菜单栏数据也从规则中获取' }
-      //     }
-      //   ]
-      // },
-      // {
-      //   path: 'vppz',
-      //   meta: { id: '3', name: 'DIDI陪诊', icon: 'BellFilled' },
-      //   children: [
-      //     {
-      //       path: 'staff',
-      //       alias: ['/vppz', '/vppz/staff'], // alias 应该是一个数组
-      //       component: () => import('@/views/vppz/staff/index.vue'),
-      //       meta: { id: '1', name: '陪护管理', icon: 'Checked', path: '/vppz/staff', describe: '陪护师可以进行创建和修改，设置对应生效状态控制C端选择' }
-      //     },
-      //     {
-      //       path: 'order',
-      //       component: () => import('@/views/vppz/order/index.vue'),
-      //       meta: { id: '2', name: '订单管理', icon: 'List', path: '/vppz/order', describe: 'C端下单后可以查看所有订单状态，已支付的订单可以完成陪护状态修改' }
-      //     }
-      //   ]
-      // }
-    ]
-  },
+// import { useUserStore } from '@/stores'
+// import departmentRouter from './modules/department'
+// import approvalRouter from './modules/approval'
+// import attendanceRouter from './modules/attendance'
+// import employeeRouter from './modules/employee'
+// import permissionRouter from './modules/permission'
+// import roleRouter from './modules/role'
+// import salaryRouter from './modules/salary'
+// import socialRouter from './modules/social'
+
+export const constantRoutes = [
   {
     path: '/login',
-    component: () => import('@/views/login/index.vue')
+    component: () => import('@/views/login/index.vue'),
+    hidden: true
   },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/dashboard',
+    children: [
+      {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index.vue'),
+        meta: { title: 'Dashboard', icon: 'dashboard' },
+      },
+      {
+        name: 'department',
+        path: '/department', // 二级路由地址为空时 表示 /department 显示一级路由 + 二级路由
+        component: () => import('@/views/department/index.vue'),
+        meta: {
+          // 路由元信息 存储数据的
+          icon: 'tree', // 图标
+          title: '组织' // 标题
+        }
+      },
+      {
+        path: '/approval',
+        name: 'approval',
+        component: () => import('@/views/approval/index.vue'),
+        meta: {
+          title: '审批',
+          icon: 'tree-table'
+        }
+      },
+      {
+        path: '/attendance',
+        name: 'attendance',
+        component: () => import('@/views/attendance/index.vue'),
+        meta: {
+          title: '考勤',
+          icon: 'excel'
+        }
+      },
+      {
+        path: '/employee',
+        name: 'employee',
+        component: () => import('@/views/employee/index.vue'),
+        meta: {
+          title: '员工',
+          icon: 'people'
+        }
+      },
+      {
+        path: '/employee/detail/:id?',
+        name: 'employeeDetail',
+        component: () => import('@/views/employee/detail.vue'),
+        meta: {
+          title: '员工详情',
+          hidden: true
+        },
+  
+      }, {
+        path: '/permission',
+        component: () => import('@/views/permission/index.vue'),
+        meta: {
+          title: '权限',
+          icon: 'lock'
+        }
+      }, {
+        path: '/role',
+        component: () => import('@/views/role/index.vue'),
+        meta: {
+          title: '角色',
+          icon: 'setting'
+        }
+      },
+      {
+        path: '/salary',
+        name: 'salary',
+        component: () => import('@/views/salary/index.vue'),
+        meta: {
+          title: '工资',
+          icon: 'money'
+        }
+      }, {
+        path: '/social',
+        name: 'social',
+        component: () => import('@/views/social/index.vue'),
+        meta: {
+          title: '社保',
+          icon: 'table'
+        }
+      }
+
+    ]
+  },
+  // {
+  //   path: '/404',
+  //   component: () => import('@/views/404'),
+  //   hidden: true
+  // },
+
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       name: 'Dashboard',
+  //       component: () => import('@/views/dashboard/index.vue'),
+  //       meta: { title: 'Dashboard', icon: 'dashboard' },
+  //     },
+
+  //   ]
+  // },
+  // departmentRouter,
+  // roleRouter,
+  // employeeRouter,
+  // permissionRouter,
+  // attendanceRouter,
+  // approvalRouter,
+  // salaryRouter,
+  // socialRouter,
+
+  // 404 page must be placed at the end !!!
+  // { path: '*', redirect: '/404', hidden: true }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  scrollBehavior: () => ({ y: 0 }),
-  routes:routes
+  // scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes
 })
 // 重置路由
-export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
-  // 全新的Router实例，其matcher属性是初始化的，只包含默认的、最初定义的路由记录。因为路由状态依赖于matcher，操作后就会重置
-}
+// export function resetRouter() {
+//   const newRouter = createRouter()
+//   router.matcher = newRouter.matcher // reset router
+//   // 全新的Router实例，其matcher属性是初始化的，只包含默认的、最初定义的路由记录。因为路由状态依赖于matcher，操作后就会重置
+// }
 
 export default router

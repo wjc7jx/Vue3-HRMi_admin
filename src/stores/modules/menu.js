@@ -12,7 +12,7 @@ export const useMenuStore = defineStore('menu',
         // tag
         const tagList = ref([])
         const setTagList = (newTagList) => {
-            // 检测newTagList是否已经在tagList中
+            // 检测newTagList是否已经在tagList中(如果不在，加入)
             if(!tagList.value.some(item => item.path === newTagList.path)){
                 tagList.value.push(newTagList)
             }
