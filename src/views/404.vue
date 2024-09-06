@@ -1,12 +1,15 @@
 <template>
+  <!-- 定义404页面的结构和样式 -->
   <div class="wscn-http404-container">
     <div class="wscn-http404">
+      <!-- 定义404错误图片 -->
       <div class="pic-404">
         <img class="pic-404__parent" src="@/assets/404_images/404.png" alt="404">
         <img class="pic-404__child left" src="@/assets/404_images/404_cloud.png" alt="404">
         <img class="pic-404__child mid" src="@/assets/404_images/404_cloud.png" alt="404">
         <img class="pic-404__child right" src="@/assets/404_images/404_cloud.png" alt="404">
       </div>
+      <!-- 定义提示信息和返回首页按钮 -->
       <div class="bullshit">
         <div class="bullshit__oops">OOPS!</div>
         <div class="bullshit__info">All rights reserved
@@ -14,18 +17,20 @@
         </div>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">Please check that the URL you entered is correct, or click the button below to return to the homepage.</div>
-        <a href="" class="bullshit__return-home">Back to home</a>
+        <a href="/dashboard" class="bullshit__return-home">Back to home</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
+// 定义Page404组件，展示404错误页面
 export default {
   name: 'Page404',
+  // 计算属性，用于动态生成提示信息
   computed: {
     message() {
+      // 返回自定义的错误提示信息
       return 'The webmaster said that you can not enter this page...'
     }
   }
@@ -33,7 +38,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// 定义404页面的样式
 .wscn-http404-container{
+  // 居中显示404错误信息
   transform: translate(-50%,-50%);
   position: absolute;
   top: 40%;
@@ -54,6 +61,7 @@ export default {
     }
     &__child {
       position: absolute;
+      // 定义左侧云朵动画
       &.left {
         width: 80px;
         top: 17px;
@@ -65,6 +73,7 @@ export default {
         animation-fill-mode: forwards;
         animation-delay: 1s;
       }
+      // 定义中间云朵动画
       &.mid {
         width: 46px;
         top: 10px;
@@ -76,6 +85,7 @@ export default {
         animation-fill-mode: forwards;
         animation-delay: 1.2s;
       }
+      // 定义右侧云朵动画
       &.right {
         width: 62px;
         top: 100px;
@@ -87,6 +97,7 @@ export default {
         animation-fill-mode: forwards;
         animation-delay: 1s;
       }
+      // 定义云朵动画的关键帧
       @keyframes cloudLeft {
         0% {
           top: 17px;
@@ -213,6 +224,7 @@ export default {
       animation-delay: 0.3s;
       animation-fill-mode: forwards;
     }
+    // 定义滑动进入动画的关键帧
     @keyframes slideUp {
       0% {
         transform: translateY(60px);

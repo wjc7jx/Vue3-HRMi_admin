@@ -11,6 +11,7 @@ export const userLoginService = data => {
         }
     })
 }
+// 获取用户基本信息
 export const getUserInfoService = () => {
     return request({
         method: 'GET',

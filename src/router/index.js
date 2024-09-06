@@ -111,11 +111,13 @@ export const constantRoutes = [
   {
     path: '/404',
     component: () => import('@/views/404.vue'),
-    hidden: true
+    meta:{
+      hidden:true
+    }
   },
 
   // {
-  //   path: '/',
+  //   path: '/', 
   //   component: Layout,
   //   redirect: '/dashboard',
   //   children: [
