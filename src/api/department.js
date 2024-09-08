@@ -31,4 +31,11 @@ export const deleteDepartmentService = id => {
         params: {id}
     })
 }
+// 负责人列表
+export const getEmployeeService = () => {
+    return request({
+        method: 'GET',
+        url: '/sys/user/simple'
+    })
+}
 
