@@ -1,13 +1,13 @@
 <script setup>
 import { ref, nextTick, onMounted } from 'vue';
-import { addDepartmentService, getDepartmentListService, getEmployeeService } from '@/api/department';
+import { addDepartmentService, getDepartmentListService, getEmployeeService, getDepartmentDetailService, updateDepartmentService } from '@/api/department';
 
 // 控制对话框的显示状态
 const dialogVisible = ref(false);
 // 引用el-dialog组件，以便于操作对话框
-const dialogRef = ref(null); 
+const dialogRef = ref(null);
 // 引用el-form组件，用于表单操作
-const formRef = ref(null); 
+const formRef = ref(null);
 // 默认表单数据
 const defaultForm = {
     name: '',
@@ -44,15 +44,15 @@ const rules = {
     name: [
         { required: true, message: '部门名称不能为空', trigger: 'blur' },
         { min: 1, max: 50, message: '部门名称长度在 1 到 50 个字符', trigger: 'blur' },
-        { validator: validateName, trigger: 'blur' }
+        { validator: validateName, trigger: 'change' }
     ],
     code: [
         { required: true, message: '部门编码不能为空', trigger: 'blur' },
         { min: 1, max: 50, message: '部门编码长度在 1 到 50 个字符', trigger: 'blur' },
-        { validator: validateCode, trigger: 'blur' }
+        { validator: validateCode, trigger: 'change' }
     ],
     managerId: [
-        { required: true, message: '部门负责人不能为空', trigger: 'change' }
+        { required: true, message: '部门负责人不能为空', trigger: 'blur' }
     ],
     introduce: [
         { required: true, message: '部门介绍不能为空', trigger: 'blur' },
@@ -62,31 +62,39 @@ const rules = {
 
 // 验证部门名称是否已存在
 async function validateName(rule, value, callback) {
-    const isExistName = departmentList.value.find(item => item.name === value);
-    if (isExistName) {
-        callback(new Error('部门名称已存在'));
-    } else {
-        callback();
+    if (form.value.id) { callback(); } else {
+        const isExistName = departmentList.value.find(item => item.name === value);
+        if (isExistName) {
+            callback(new Error('部门名称已存在'));
+        } else {
+            callback();
+        }
     }
 }
 
 // 验证部门编码是否已存在
 async function validateCode(rule, value, callback) {
-    const isExistCode = departmentList.value.find(item => item.code === value);
-    if (isExistCode) {
-        callback(new Error('部门编码已存在'));
-    } else {
-        callback();
+    if (form.value.id) { callback(); } else {
+        const isExistCode = departmentList.value.find(item => item.code === value);
+        if (isExistCode) {
+            callback(new Error('部门编码已存在'));
+        } else {
+            callback();
+        }
     }
 }
 
 // 打开对话框，根据命令添加或编辑部门
-function open(id, command) {
+async function open(id, command) {
     dialogVisible.value = true;
     resetForm();
 
     if (command === 'add') {
         form.value.pid = id;
+    }
+    else if (command === 'edit') {
+        const res = await getDepartmentDetailService(id);
+        form.value = res;
     }
 }
 // 暴露open方法，以便外部调用
@@ -99,8 +107,13 @@ async function handleSubmit() {
     // 验证表单数据有效性
     await formRef.value.validate(async (valid) => {
         if (valid) {
-            console.log(form.value);
-            await addDepartmentService(form.value);
+            // console.log(form.value);
+            if (!form.value.id) {
+                await addDepartmentService(form.value);
+
+            } else {
+                await updateDepartmentService(form.value)
+            }
             emit('update:success');
             handleCancel();
         }
@@ -120,15 +133,18 @@ function resetForm() {
 // 取消操作，关闭对话框并重置表单
 function handleCancel() {
     resetForm();
-    dialogVisible.value = false; 
+    nextTick(() => {
+        dialogVisible.value = false;
+    });
 }
+
 
 </script>
 
 <template>
     <!-- 对话框，包含表单 -->
     <el-dialog v-model="dialogVisible" ref="dialogRef">
-        <el-form ref="formRef" :model="form" :rules="rules">
+        <el-form ref="formRef" :model="form" :rules="rules" validate-on-rule-change>
             <el-form-item label="部门名称" prop="name">
                 <el-input v-model="form.name"></el-input>
             </el-form-item>
@@ -137,7 +153,8 @@ function handleCancel() {
             </el-form-item>
             <el-form-item label="部门负责人" prop="managerId">
                 <el-select v-model="form.managerId" placeholder="请选择">
-                    <el-option v-for="item in employeeList" :key="item.id" :label="item.username" :value="item.id"></el-option>
+                    <el-option v-for="item in employeeList" :key="item.id" :label="item.username"
+                        :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="部门介绍" prop="introduce">

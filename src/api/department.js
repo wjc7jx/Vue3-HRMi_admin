@@ -23,6 +23,14 @@ export const addDepartmentService = data => {
         data
     })
 }
+// 修改-部门详情
+export const updateDepartmentService = data => {
+    return request({
+        method: 'PUT',
+        url: `/company/department/${data.id}`,
+        data
+    })
+}
 // 删除-部门
 export const deleteDepartmentService = id => {
     return request({

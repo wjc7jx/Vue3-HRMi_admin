@@ -1,5 +1,6 @@
 <template>
-  <el-tree style="max-width: 600px" :data="data" :props="defaultProps" :default-expand-all="true" :expand-on-click-node="false">
+  <el-tree style="max-width: 600px" :data="data" :props="defaultProps" :default-expand-all="true"
+    :expand-on-click-node="false">
     <template #default="{ node, data }">
       <el-row style="width:100%;height:40px" type="flex" justify="space-between" align="middle">
         <el-col :span="6">
@@ -23,14 +24,15 @@
       </el-row>
     </template>
   </el-tree>
-<DepartmentDia ref="dialogRef" @update:success="getDepartmentList()"></DepartmentDia>
+  <DepartmentDia ref="dialogRef" @update:success="getDepartmentList()"></DepartmentDia>
 </template>
 
 <script setup>
-import { getDepartmentListService } from '@/api/department'
+import { getDepartmentListService,deleteDepartmentService  } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import { ref, onMounted } from 'vue'
 import DepartmentDia from './components/DepartmentDia.vue';
+// import { ElMessage, ElMessageBox } from 'element-plus'
 const data = ref([])
 const defaultProps = {
   children: 'children',
@@ -44,18 +46,30 @@ onMounted(async () => {
   await getDepartmentList()
 })
 // 
-const dialogRef=ref()
-const handleCommand = (command, id) => {
+const dialogRef = ref()
+const handleCommand = async (command, id) => {
   // 现在你可以使用 id 来访问当前行的数据
   switch (command) {
     case 'add':
-    dialogRef.value.open(id,command)
+      dialogRef.value.open(id, command)
       break;
     case 'edit':
-      dialogRef.value.open(id,command)
+      dialogRef.value.open(id, command)
       break;
+    case 'delete':
+      // 弹出删除确认框
+      const res = await ElMessageBox.confirm('确定要删除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+      if (res) {
+        await deleteDepartmentService(id)
+        await getDepartmentList()
+      }
   }
 }
+
 </script>
 
 <style lang="scss" scoped>
