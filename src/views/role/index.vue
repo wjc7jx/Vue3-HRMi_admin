@@ -6,25 +6,39 @@
     <!-- 角色表格 -->
     <el-table :data="tableData" style="width: 100%">
       <!-- 角色名称列 -->
-      <el-table-column prop="name" label="角色名称" width="180" align="center" />
+      <el-table-column prop="name" label="角色名称" width="180" align="center">
+        <template #default="{ row }">
+          <el-input v-if="row.isEdit" v-model="row.editRow.name" size="small" />
+          <span v-else>{{ row.name }}</span>
+        </template>
+      </el-table-column>
       <!-- 启用状态列 -->
       <el-table-column prop="state" label="启用状态" width="180" align="center">
-        <template #default="scope">
+        <template #default="{ row }">
           <!-- 根据状态显示不同的标签颜色 -->
-          <el-tag :type="scope.row.state ? 'success' : 'danger'">{{ scope.row.state ? '启用' : '禁用' }}</el-tag>
+          <el-switch v-if="row.isEdit" v-model="row.editRow.state" size="small" :active-value="1"
+            :inactive-value="0"></el-switch>
+          <el-tag v-else :type="row.state ? 'success' : 'danger'">{{ row.state ? '启用' : '禁用' }}</el-tag>
         </template>
       </el-table-column>
       <!-- 描述列 -->
-      <el-table-column prop="description" label="描述" align="center" />
+      <el-table-column prop="description" label="描述" align="center">
+        <template #default="{ row }">
+          <el-input v-if="row.isEdit" v-model="row.editRow.description" size="small" />
+          <span v-else>{{ row.description }}</span>
+        </template>
+      </el-table-column>
       <!-- 操作列 -->
       <el-table-column fixed="right" label="操作" width="220" align="center">
-        <template #default="scope">
-          <!-- 分配权限按钮 -->
-          <el-button link size="small" @click="handlePermission(scope.row)">分配权限</el-button>
-          <!-- 编辑按钮 -->
-          <el-button link size="small" @click="handleEdit(scope.row)">编辑</el-button>
-          <!-- 删除按钮 -->
-          <el-button link size="small" @click="handleDelete(scope.row)">删除</el-button>
+        <template #default="{ row }">
+          <div v-if="row.isEdit">
+            <el-button size="small" @click="saveEdit(row)">保存</el-button>
+            <el-button size="small" @click="cancelEdit(row)">取消</el-button>
+          </div>
+          <div v-else><el-button link size="small" @click="handlePermission(row)">分配权限</el-button>
+            <el-button link size="small" @click="handleEdit(row)">编辑</el-button>
+            <el-button link size="small" @click="handleDelete(row)">删除</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -60,7 +74,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { getRoleList, addRole } from '@/api/role'
+import { getRoleList, addRole, updateRole, delRole } from '@/api/role'
 // 表格数据
 const tableData = ref([])
 // 分页参数
@@ -95,18 +109,24 @@ const handlePermission = (row) => {
 }
 
 const handleEdit = (row) => {
-  console.log('编辑', row)
+  startEdit(row)
+  // console.log('编辑', row)
   // 这里可以添加编辑角色的逻辑
 }
 
-const handleDelete = (row) => {
+const handleDelete = async(row) => {
   // 这里可以添加删除角色的逻辑
+  if(tableData.value.length === 1 && PageParams.page > 1) {
+    PageParams.page--
+  }
+  await delRole(row.id)
+  await getTableData()
 }
 
 // 新增角色表单数据
 const formData = reactive({
   name: '',
-  state: true,
+  state: 1,
   description: ''
 })
 const formRef = ref(null)
@@ -142,10 +162,42 @@ const cancelForm = () => {
   formRef.value?.resetFields()
 }
 
-// // 编辑角色表单数据
-// const editFormData = reactive({
-  
-// })
+// 编辑相关方法
+// 开始编辑
+function startEdit(row) {
+  const item = tableData.value.find(item => item.id === row.id);
+  if (item) {
+    item.isEdit = true;
+    item.editRow = {
+      id: row.id,
+      name: row.name,
+      state: row.state,
+      description: row.description
+    };
+  }
+}
+
+// 保存编辑
+async function saveEdit(row) {
+  // console.log(object);
+  await updateRole(row.editRow);
+  const item = tableData.value.find(item => item.id === row.id);
+  if (item) {
+    item.isEdit = false;
+    item.name = item.editRow.name;
+    item.state = item.editRow.state;
+    item.description = item.editRow.description;
+  }
+}
+
+// 取消编辑
+function cancelEdit(row) {
+  const item = tableData.value.find(item => item.id === row.id);
+  if (item) {
+    item.isEdit = false;
+    item.editRow = {}
+  }
+}
 </script>
 
 <style lang="scss" scoped>

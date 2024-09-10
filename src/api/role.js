@@ -14,3 +14,18 @@ export const addRole = (data) => {
         data
     })
 }
+// 修改-角色
+export const updateRole = (data) => {
+    return request({
+        method: 'PUT',
+        url: `/sys/role/${data.id}`,
+        data
+    })
+}
+// 删除-角色
+export const delRole = (id) => {
+    return request({
+        method: 'DELETE',
+        url: `/sys/role/${id}`
+    })
+}
