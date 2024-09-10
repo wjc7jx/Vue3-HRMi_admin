@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { getDepartmentListService,deleteDepartmentService  } from '@/api/department'
+import { getDepartmentListService, deleteDepartmentService } from '@/api/department'
 import { transListToTreeData } from '@/utils'
 import { ref, onMounted } from 'vue'
 import DepartmentDia from './components/DepartmentDia.vue';
@@ -58,14 +58,25 @@ const handleCommand = async (command, id) => {
       break;
     case 'delete':
       // 弹出删除确认框
-      const res = await ElMessageBox.confirm('确定要删除吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      })
-      if (res) {
-        await deleteDepartmentService(id)
-        await getDepartmentList()
+      try {
+        // 弹出删除确认框
+        const res = await ElMessageBox.confirm('确定要删除吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        })
+        if (res === 'confirm') { // 确保是点击了确定按钮
+          await deleteDepartmentService(id)
+          await getDepartmentList()
+        }
+      } catch (error) {
+        // 处理点击取消的情况
+        if (error === 'cancel') {
+          // 用户取消了操作，这里可以不做任何事，或者添加一些逻辑
+        } else {
+          // 其他错误，可以在这里处理或者抛出
+          console.error(error)
+        }
       }
   }
 }
