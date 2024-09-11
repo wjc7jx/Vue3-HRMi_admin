@@ -1,8 +1,8 @@
 <template>
   <el-container style="height: 83vh">
     <el-aside width="220px" style="border-right: 2px solid #eee;">
-      <el-input v-model="input" style="width: 200px;margin-bottom: 10px;" placeholder="输入员工姓名全员搜索"
-        :prefix-icon="Search" />
+      <el-input v-model="queryParams.keyword" style="width: 200px;margin-bottom: 10px;" placeholder="输入员工姓名全员搜索"
+        :prefix-icon="Search" @input="searchValue" />
       <el-tree style="max-width: 600px" :data="data" :props="defaultProps" :default-expand-all="true"
         :expand-on-click-node="false" node-key="id" ref="treeRef" highlight-current @current-change="selectNode" />
     </el-aside>
@@ -47,6 +47,7 @@ import { ref, onMounted, reactive, nextTick, watch, computed } from 'vue'
 import { transListToTreeData } from '@/utils'
 import { getDepartmentListService } from '@/api/department'
 import { getEmployeeList } from '@/api/employee'
+import { debounce } from '@/utils'
 // 树形结构
 const data = ref([])
 const defaultProps = {
@@ -84,7 +85,7 @@ const getTableData = async () => {
   try {
     const { rows, total } = await getEmployeeList(queryParams);
     formTable.value = rows;
-  queryParams.total = total
+    queryParams.total = total
   } catch (error) {
     console.error('Failed to fetch employee data:', error);
     // 可以在这里添加错误处理逻辑，比如显示错误消息  
@@ -115,7 +116,15 @@ const changePage = async (newPage) => {
   await getTableData()
 }
 
-const input = ref('')
+// 搜索
+const debouncedGetData = debounce(getTableData, 500); // 创建一个防抖版本的 getTableData  
+  
+const searchValue = (value) => {  
+  queryParams.keyword = value;  
+  // 调用防抖函数  
+  debouncedGetData();  
+}
+
 </script>
 
 <style lang="scss" scoped>
