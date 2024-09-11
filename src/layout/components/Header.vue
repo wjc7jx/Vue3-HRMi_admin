@@ -184,7 +184,7 @@ const changePass = () => {
             cursor: pointer;
 
             .avatar {
-                margin-right: px; // 头像右侧外边距
+                margin-right: 10px; // 头像右侧外边距
             }
 
             .avatar-text {

@@ -23,6 +23,7 @@ export default defineConfig({
     }
   },
   server: {
+    port: 3000, // 设置端口号
     proxy: {
       '/api': {
         target: 'https://heimahr.itheima.net',
