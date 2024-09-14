@@ -30,3 +30,32 @@ export function getExcelTemplate(){
       data
     })
   }
+// 新增-员工
+export function addEmployeeService(data) {
+  return request({
+    method: 'POST',
+    url: '/sys/user',
+    data
+  })
+}
+// 获取员工详情
+export function getEmployeeDetailService(id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
+}
+// 修改-员工
+export function updateEmployeeService(data) {
+  return request({
+    method: 'put',
+    url: `/sys/user/${data.id}`,
+    data
+  })
+}
+// 删除-员工
+export function delEmployeeService(id) {
+  return request({
+    method: 'delete',
+    url: `/sys/user/${id}`
+  })
+}
