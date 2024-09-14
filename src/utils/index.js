@@ -1,3 +1,5 @@
+import FileSaver from 'file-saver';
+
 /**
  * 将列表形式的数据转换为树形结构
  * @param {Array} list - 列表形式的数据数组
@@ -44,3 +46,45 @@ export function debounce(func, wait) {
         }, wait); // 等待时间为传入的wait参数。
     };
 }
+
+
+
+/**
+ * 通用的文件下载方法
+ * @param {Function} exportFunction - 执行导出操作的异步函数
+ * @param {String} filename - 导出的文件名
+ * @returns {Promise} - 返回一个Promise，以便在调用时处理异步操作
+ */
+export async function downloadFile(exportFunction, filename) {
+    // 显示加载提示
+    const loadingMessage = ElMessage({
+        message: '正在导出，请稍候...',
+        type: 'info',
+        duration: 0, // 设置为0表示不自动关闭
+        center: true,
+    });
+
+    try {
+        const res = await exportFunction();
+        // 使用FileSaver保存文件
+        FileSaver.saveAs(res, filename);
+
+        // 导出完成后关闭加载提示并显示成功消息
+        loadingMessage.close();
+        ElMessage({
+            type: 'success',
+            message: '导出成功!',
+            center: true,
+        });
+    } catch (error) {
+        // 出错处理
+        loadingMessage.close();
+        ElMessage({
+            type: 'error',
+            message: '导出失败!',
+            center: true,
+        });
+        console.error(error);
+    }
+}
+

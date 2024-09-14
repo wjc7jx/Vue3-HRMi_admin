@@ -9,8 +9,8 @@
     <el-main>
       <el-row type="flex" justify="end">
         <el-button size="small" type="primary">添加员工</el-button>
-        <el-button size="small">excel导入</el-button>
-        <el-button size="small">excel导出</el-button>
+        <el-button size="small" @click="btnImport()">excel导入</el-button>
+        <el-button size="small" @click="exportExcel()">excel导出</el-button>
       </el-row>
       <el-table :data="formTable">
         <el-table-column prop="staffPhoto" align="center" label="头像">
@@ -39,6 +39,7 @@
       </el-row>
     </el-main>
   </el-container>
+  <importExcel v-model="showExcelDialog"></importExcel>
 </template>
 
 <script setup>
@@ -46,8 +47,9 @@ import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted, reactive, nextTick, watch, computed } from 'vue'
 import { transListToTreeData } from '@/utils'
 import { getDepartmentListService } from '@/api/department'
-import { getEmployeeList } from '@/api/employee'
-import { debounce } from '@/utils'
+import { getEmployeeList,exportEmployee } from '@/api/employee'
+import { debounce,downloadFile } from '@/utils'
+import importExcel from './components/import-excel.vue'
 // 树形结构
 const data = ref([])
 const defaultProps = {
@@ -125,6 +127,17 @@ const searchValue = (value) => {
   debouncedGetData();  
 }
 
+// 导出excel
+const exportExcel = async () => {
+  console.log('点击');
+  downloadFile( exportEmployee, '员工列表.xlsx')
+}
+
+const showExcelDialog= ref(false)
+// 导入excel
+const btnImport= async () => {
+    showExcelDialog.value = true
+}
 </script>
 
 <style lang="scss" scoped>

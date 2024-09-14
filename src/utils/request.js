@@ -7,7 +7,7 @@ import router from '@/router';
 const service = axios.create({
   // baseURL: '/api', // API的基础路径  
   baseURL: import.meta.env.VITE_APP_BASE_API,
-  timeout: 10000, // 请求超时时间  
+  timeout: 15000, // 请求超时时间  
 });
 
 // 请求拦截器  
