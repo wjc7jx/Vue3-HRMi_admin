@@ -99,6 +99,7 @@ const dialogVisible=ref(false)
 const changePass = () => {
     dialogVisible.value = true
 }
+
 </script>
 
 <style lang="scss" scoped>

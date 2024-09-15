@@ -23,20 +23,11 @@
   </div>
 </template>
 
-<script>
-// 定义Page404组件，展示404错误页面
-export default {
-  name: 'Page404',
-  // 计算属性，用于动态生成提示信息
-  computed: {
-    message() {
-      // 返回自定义的错误提示信息
-      return 'The webmaster said that you can not enter this page...'
-    }
-  }
-}
-</script>
 
+<script setup>
+  import { computed  } from 'vue'
+  const message = computed(() => 'The webmaster said that you can not enter this page...')
+</script>
 <style lang="scss" scoped>
 // 定义404页面的样式
 .wscn-http404-container{

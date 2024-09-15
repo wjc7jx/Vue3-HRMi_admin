@@ -68,6 +68,7 @@
             <el-col :span="12">
               <el-form-item label="员工头像">
                 <!-- 放置上传图片 -->
+                <image-upload v-model="userInfo.staffPhoto" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -88,6 +89,7 @@ import { getDepartmentListService } from '@/api/department'
 import { addEmployeeService, getEmployeeDetailService,updateEmployeeService } from '@/api/employee'
 import { transListToTreeData } from '@/utils'
 import { useRouter,useRoute } from 'vue-router'
+import ImageUpload from './components/image-upload.vue'
 const router = useRouter()
 const route=useRoute()
 const userInfo = ref({
@@ -146,7 +148,7 @@ onMounted(async () => {
   await getDepartmentList()
   if (route.params.id) {
     await getEmployeeDetail()
-    // userInfo.value.departmentId = selectedPath
+    console.log(userInfo.value);
   }
 
 })
@@ -169,6 +171,7 @@ const beforeAvatarUpload = (file) => {
   // }
   // return isJPG && isLt2M
 }
+
 watch(() => userInfo.value.departmentId, (newVal, oldVal) => {
   // 检查newVal是否为数组并且至少有一个元素
   if (Array.isArray(newVal) && newVal.length > 0) {
