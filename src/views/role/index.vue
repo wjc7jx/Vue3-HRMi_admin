@@ -70,11 +70,20 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <!-- 分配权限对话框 -->
+   <el-dialog title="分配权限" v-model="showPermissionDialog" width="40%">
+    <el-tree ref="treeRef" :data="permissionList" show-checkbox node-key="id" default-expand-all :props="defaultProps" :default-checked-keys="permIds" />
+    <template #footer>
+      <el-button @click="btnCancelPermission">取消</el-button>
+      <el-button type="primary" @click="btnOKPermission">确定</el-button>
+    </template>
+   </el-dialog>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { getRoleList, addRole, updateRole, delRole } from '@/api/role'
+import { getRoleList, addRole, updateRole, delRole, getRoleDetail,assignPermission } from '@/api/role'
+import {getPermissionList} from '@/api/permission'
 // 表格数据
 const tableData = ref([])
 // 分页参数
@@ -103,10 +112,7 @@ const changePage = async (newPage) => {
 }
 
 // 操作方法
-const handlePermission = (row) => {
-  console.log('分配权限', row)
-  // 这里可以添加分配权限的逻辑
-}
+
 
 const handleEdit = (row) => {
   startEdit(row)
@@ -115,7 +121,7 @@ const handleEdit = (row) => {
 }
 
 const handleDelete = async(row) => {
-  // 这里可以添加删除角色的逻辑
+  // 删除角色
   if(tableData.value.length === 1 && PageParams.page > 1) {
     PageParams.page--
   }
@@ -198,6 +204,35 @@ function cancelEdit(row) {
     item.editRow = {}
   }
 }
+
+// 分配权限
+const showPermissionDialog = ref(false)
+const currentRoleId= ref(null)
+const permIds = ref([])
+const permissionList = ref([])
+const defaultProps = {
+  children: 'children',
+  label: 'name'
+}
+const treeRef = ref(null)
+const handlePermission = async(row) => {
+  currentRoleId.value = row.id
+  permIds.value = await getRoleDetail(row.id).then(res => res.permIds)
+  permissionList.value = await getPermissionList()
+  showPermissionDialog.value = true
+}
+const btnOKPermission = async() => {
+  await assignPermission({
+    id: currentRoleId.value,
+    permIds: treeRef.value.getCheckedKeys()
+  })
+  console.log(permIds.value);
+  btnCancelPermission()
+}
+const btnCancelPermission = () => {
+  showPermissionDialog.value = false
+}
+
 </script>
 
 <style lang="scss" scoped>

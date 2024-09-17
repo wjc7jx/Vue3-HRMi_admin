@@ -29,3 +29,19 @@ export const delRole = (id) => {
         url: `/sys/role/${id}`
     })
 }
+// 获取角色详情（用于分配权限时初始化permIds）
+export function getRoleDetail(id) {
+    return request({
+        method: 'GET',
+        url: `/sys/role/${id}`
+    })
+}
+
+// 分配权限
+export function assignPermission(data) {
+    return request({
+        method: 'PUT',
+        url: '/sys/role/assignPrem',
+        data
+    })
+}

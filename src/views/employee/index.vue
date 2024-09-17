@@ -8,7 +8,7 @@
     </el-aside>
     <el-main>
       <el-row type="flex" justify="end">
-        <el-button size="small"  @click="router.push('/employee/detail')">添加员工</el-button>
+        <el-button size="small" @click="router.push('/employee/detail')">添加员工</el-button>
         <el-button size="small" @click="btnImport()">excel导入</el-button>
         <el-button size="small" @click="exportExcel()">excel导出</el-button>
       </el-row>
@@ -31,10 +31,10 @@
         </el-table-column>
         <el-table-column prop="departmentName" label="部门" align="center" />
         <el-table-column prop="timeOfEntry" label="入职时间" sortable align="center" />
-        <el-table-column  label="操作" align="center">
+        <el-table-column label="操作" align="center">
           <template #default="{ row }">
             <el-button size="small" link @click="router.push(`/employee/detail/${row.id}`)">编辑</el-button>
-            <el-button size="small" link >角色</el-button>
+            <el-button size="small" link @click="editRole(row.id)">角色</el-button>
 
             <el-button size="small" link @click="delEmployee(row.id)">删除</el-button>
 
@@ -48,7 +48,23 @@
       </el-row>
     </el-main>
   </el-container>
+  <!-- 导入excel -->
   <importExcel v-model="showExcelDialog"></importExcel>
+  <!-- 员工-角色-分配 -->
+  <el-dialog v-model="showRoleDialog" title="分配角色">
+      <el-checkbox-group v-model="roleIds">
+        <!-- 放置n个的checkbox  要执行checkbox的存储值 item.id-->
+        <el-checkbox
+          v-for="item in roleList"
+          :key="item.id"
+          :label="item.id"
+        >{{ item.name }}</el-checkbox>
+      </el-checkbox-group>
+      <template #footer>
+        <el-button type="primary" @click="btnOK()">确定</el-button>
+        <el-button @click="btnCancel()">取消</el-button>
+      </template>
+</el-dialog>
 </template>
 
 <script setup>
@@ -56,11 +72,11 @@ import { Search } from '@element-plus/icons-vue'
 import { ref, onMounted, reactive, nextTick, watch, computed } from 'vue'
 import { transListToTreeData } from '@/utils'
 import { getDepartmentListService } from '@/api/department'
-import { getEmployeeList,exportEmployee,delEmployeeService } from '@/api/employee'
-import { debounce,downloadFile } from '@/utils'
+import { getEmployeeList, exportEmployee, delEmployeeService, getEnableRoleList,assignRole,getEmployeeDetailService } from '@/api/employee'
+import { debounce, downloadFile } from '@/utils'
 import importExcel from './components/import-excel.vue'
-import{useRouter} from 'vue-router'
-const router=useRouter()
+import { useRouter } from 'vue-router'
+const router = useRouter()
 // 树形结构
 const data = ref([])
 const defaultProps = {
@@ -130,23 +146,23 @@ const changePage = async (newPage) => {
 
 // 搜索
 const debouncedGetData = debounce(getTableData, 500); // 创建一个防抖版本的 getTableData  
-  
-const searchValue = (value) => {  
-  queryParams.keyword = value;  
+
+const searchValue = (value) => {
+  queryParams.keyword = value;
   // 调用防抖函数  
-  debouncedGetData();  
+  debouncedGetData();
 }
 
 // 导出excel
 const exportExcel = async () => {
   console.log('点击');
-  downloadFile( exportEmployee, '员工列表.xlsx')
+  downloadFile(exportEmployee, '员工列表.xlsx')
 }
 
-const showExcelDialog= ref(false)
+const showExcelDialog = ref(false)
 // 导入excel
-const btnImport= async () => {
-    showExcelDialog.value = true
+const btnImport = async () => {
+  showExcelDialog.value = true
 }
 // 删除员工
 const delEmployee = async (id) => {
@@ -154,12 +170,33 @@ const delEmployee = async (id) => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
-    }).then(async () => {
-      await   delEmployeeService(id)
-      if (formTable.value.length === 1 && queryParams.page > 1) queryParams.page--
-      await getTableData()
-    })
-    
+  }).then(async () => {
+    await delEmployeeService(id)
+    if (formTable.value.length === 1 && queryParams.page > 1) queryParams.page--
+    await getTableData()
+  })
+}
+
+// 角色管理弹层
+const roleList = ref([])
+const showRoleDialog = ref(false)
+const roleIds = ref([])
+const currentID= ref(null)
+const editRole= async (id) => {
+  roleList.value = await getEnableRoleList()
+  roleIds.value = await getEmployeeDetailService(id).then(res => res.roleIds)
+  showRoleDialog.value = true
+  currentID.value = id
+}
+const btnOK = async () => {
+  const res = await assignRole({
+    id: currentID.value,
+    roleIds:roleIds.value
+  })
+  btnCancel()
+}
+const btnCancel = () => {
+  showRoleDialog.value = false
 }
 </script>
 

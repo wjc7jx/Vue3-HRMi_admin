@@ -16,7 +16,7 @@
       <template #default="{ row }">
         <el-button size="small" link @click="addPermission(row.id, 2)">添加</el-button>
         <el-button size="small" link @click="editPermission(row.id)">编辑</el-button>
-        <el-button size="small" link @click="">删除</el-button>
+        <el-button size="small" link @click="deletePermission(row.id)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -27,7 +27,7 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from "vue";
 import {transListToTreeData}from "@/utils";
-import { getPermissionList } from "@/api/permission";
+import { getPermissionList,delPermission  } from "@/api/permission";
 import PermissionDialog from "./PermissionDialog.vue";
 
 // 控制权限对话框的显示与隐藏
@@ -60,7 +60,11 @@ const editPermission = (id) => {
 const success= async () => {
     list.value = transListToTreeData(await getPermissionList(), 0)
 }
-
+// 删除权限
+const deletePermission = async (id) => {
+  await delPermission(id);
+  list.value = transListToTreeData(await getPermissionList(), 0)
+}
 
 </script>
 

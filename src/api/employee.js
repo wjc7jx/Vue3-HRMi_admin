@@ -59,3 +59,21 @@ export function delEmployeeService(id) {
     url: `/sys/user/${id}`
   })
 }
+
+/**
+ * 获取可用的角色
+ * **/
+
+export function getEnableRoleList() {
+  return request({
+    url: '/sys/role/list/enabled'
+  })
+}
+// 分配-员工-角色
+export function assignRole(data) {
+  return request({
+    method: 'put',
+    url: '/sys/user/assignRoles',
+    data
+  })
+}
